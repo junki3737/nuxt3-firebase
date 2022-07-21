@@ -1,3 +1,31 @@
+<script setup lang="ts"> 
+import { ref } from 'vue';
+
+const email = ref("");
+const password = ref("");
+
+// const emailSignIn = async () => {
+//   const { signIn, token } = useAuth();
+//   await signIn(email.value, password.value);
+//   // ダッシュボードへ遷移
+//   navigateTo('/', { replace: true });
+// };
+
+// const googleSignIn = async () =>{
+//   const { signInByGoogleAuthProvider, token } = useAuth();
+//   await signInByGoogleAuthProvider();
+//   navigateTo('/', { replace: true });
+// };
+
+const setEmail = (value: string) :void => {
+    email.value = value;
+};
+
+const setPassword = (value: string) :void => {
+    password.value = value;
+};
+</script>
+
 <template>
   <div>
       <div class="mx-15 mt-15">
@@ -14,57 +42,23 @@
         @setPassword="setPassword"
       />
       </div>
+        <!-- <v-btn @click="googleSignIn">
+          Google Login
+        </v-btn> -->
       <div class="mt-15">
       <v-row class="justify-center mt-15">
-      <v-btn
-        :loading="loading"
-        @click="signin"
+      <!-- <v-btn
+        @click="emailSignIn"
         color="#99F"
         width="300"
-        class="white-text"
       >
         ログイン
-      </v-btn>
+      </v-btn> -->
       </v-row>
       </div>
-      
-    <v-card-text>
-      {{ params }}
-    </v-card-text>
-          <p>
+      <p>
       アカウントをお持ちで無い方は
       <nuxt-link to="/auth/signup">サインアップ</nuxt-link>
       </p>
   </div>
 </template>
-
-<script>
-export default {
-  layout: 'beforeLogin',
-  data () {
-    return {
-      loading: false,
-      params: { email: '', password: '' } 
-    }
-  },
-  methods: {
-    signin () {
-      this.loading = true
-      setTimeout(() => {
-        // this.formReset()
-        this.loading = false
-      }, 1500)
-    },
-    // formReset () {
-    //   this.$refs.form.reset()
-    //   this.params = { email: '', password: '' } 
-    // },
-    setEmail(val){
-        this.params.email = val
-    },
-    setPassword(val){
-        this.params.password = val
-    }
-  }
-}
-</script>

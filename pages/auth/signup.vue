@@ -1,3 +1,23 @@
+<script setup lang="ts">
+import { ref } from "vue";
+
+const email = ref("");
+const passowrd = ref("");
+const rePassword = ref("");
+
+const setEmail = (value: string) :void => {
+  email.value = value;
+};
+
+const setPassword = (value: string) :void => {
+  passowrd.value = value;
+};
+
+const setRePassword = (value: string) :void => {
+  rePassword.value = value;
+};
+</script>
+
 <template>
   <div>
       <div class="mx-15 mt-15">
@@ -14,13 +34,13 @@
         @setPassword="setPassword"
       />
       </div>
-      <div class="mx-15 mt-5">
+      <!-- <div class="mx-15 mt-5">
       <user-form-name
         :type="'password'"
         :label="'Password(もう一度)'"
         @setPassword="setRePassword"
       />
-      </div>
+      </div> -->
       <!-- <span>
         {{ checkPassword }}
       </span> -->
@@ -33,50 +53,9 @@
         width="300"
         class="white-text"
       >
-        ログイン
+        サインアップ
       </v-btn>
       </v-row>
       </div>
-    <v-card-text>
-      {{ params }}
-    </v-card-text>
   </div>
 </template>
-
-<script>
-export default {
-  data () {
-    return {
-      loading: false,
-      checkPassword:"",
-      params: { email: '', password: '',rePassword:"" }
-    }
-  },
-  methods: {
-    signin () {
-      this.loading = true
-      setTimeout(() => {
-        // this.formReset()
-        this.loading = false
-      }, 1500)
-    },
-
-    setEmail(val){
-      this.params.email = val
-    },
-    setPassword(val){
-      this.params.password = val
-    },
-    setRePassword(val){
-      this.params.rePassword = val
-      console.log("ここ通ってる？")
-        if (this.params.password != this.params.rePassword){
-          this.checkPassword = "パスワードが一致していません"
-        }else{
-          this.checkPassword = "パスワードが一致しました"
-        }
-      
-    }
-  }
-}
-</script>

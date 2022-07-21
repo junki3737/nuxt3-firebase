@@ -1,3 +1,51 @@
+<script setup lang="ts">
+import { ref, computed } from "vue";
+
+const props = withDefaults(
+  defineProps<{
+    type: string
+    label: string
+    rules: Array<string>
+  }>(),
+  {
+    type: "",
+    label: "",
+    rules: undefined
+  }
+);
+
+const data = ref("");
+
+interface Emits{
+  (e: "setEmail", value: string): void;
+  (e: "setPassword", value: string): void;
+}
+const emit = defineEmits<Emits>();
+
+const email = computed({
+  get: () => {
+    return data.value;
+  },
+  set: (newValue: string) => {
+    data.value = newValue;
+    emit("setEmail", newValue);
+  }
+});
+
+const password = computed({
+  get: () => {
+    return data.value;
+  },
+  set: (newValue: string) => {
+    data.value = newValue;
+    emit("setPassword", newValue);
+  }
+});
+
+const show = ref(false)
+
+</script>
+
 <template>
   <div>
     <div v-if="type == 'email'">
@@ -12,55 +60,13 @@
     <div v-if="type == 'password'">
       <v-text-field
         v-model="password"
-        :type="type"
         :label="label"
         :rules="rules"
+        :append-icon="show ? 'mdi-eye' : 'mdi-eye-off' "
+        :type="show ? 'text' : 'password'"
         variant="outlined"
+        @click:append="show = !show"
       />
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  props: {
-    type: {
-      type: String,
-      default: ''
-    },
-    label:{
-      type: String,
-      default: ""
-    },
-    rules: {
-      type: Array,
-      default: []
-    }
-  },
-  data () {
-    return{
-        value: ""
-    }
-  },
-  computed: {
-    email:{
-      get () {
-          return this.value
-      },
-      set (newValue) {  
-        this.value = newValue
-        return this.$emit('setEmail', newValue) 
-      },
-    },
-    password: {
-      get () {
-        return this.value
-      },
-      set (newValue){
-        this.value = newValue
-        return this.$emit("setPassword",newValue)
-      },
-    }
-  }
-}
-</script>

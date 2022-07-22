@@ -45,7 +45,7 @@ const setRePassword = (value: string) :void => {
         {{ checkPassword }}
       </span> -->
       <div class="mt-15">
-      <v-row class="justify-center mt-15">
+      <v-row class="justify-center mt-15 mb-5">
       <v-btn
         :loading="loading"
         @click="signin"
@@ -57,5 +57,9 @@ const setRePassword = (value: string) :void => {
       </v-btn>
       </v-row>
       </div>
+      <p>
+      アカウントをお持ちの方は
+      <nuxt-link to="/auth/signin">サインイン</nuxt-link>
+      </p>
   </div>
 </template>

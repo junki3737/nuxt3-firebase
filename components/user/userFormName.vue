@@ -54,7 +54,7 @@ const show = ref(false)
         :type="type"
         :label="label"
         :rules="rules"
-        variant="outlined"
+        variant="underlined"
       />
     </div>
     <div v-if="type == 'password'">
@@ -64,7 +64,7 @@ const show = ref(false)
         :rules="rules"
         :append-icon="show ? 'mdi-eye' : 'mdi-eye-off' "
         :type="show ? 'text' : 'password'"
-        variant="outlined"
+        variant="underlined"
         @click:append="show = !show"
       />
     </div>

@@ -46,7 +46,7 @@ const setPassword = (value: string) :void => {
           Google Login
         </v-btn> -->
       <div class="mt-15">
-      <v-row class="justify-center mt-15">
+      <v-row class="justify-center mt-15 mb-5">
       <!-- <v-btn
         @click="emailSignIn"
         color="#99F"

@@ -12,5 +12,16 @@ export default defineNuxtConfig({
         define: {
             "process.env.DEBUG": false
         }
-    }
+    },
+    typescript: {
+      strict: true,
+    },
+    runtimeConfig: {
+      public: {
+        firebaseApiKey: process.env.FIREBASE_API_KEY,
+        firebaseAuthDomain: process.env.FIREBASE_AUTH_DOMAIN,
+        // firebaseDatabaseURL: process.env.FIREBASE_DATABASE_URL,
+        firebaseProjectId: process.env.FIREBASE_PROJECT_ID,
+      },
+    },
 })

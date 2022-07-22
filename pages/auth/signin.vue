@@ -4,18 +4,18 @@ import { ref } from 'vue';
 const email = ref("");
 const password = ref("");
 
-// const emailSignIn = async () => {
-//   const { signIn, token } = useAuth();
-//   await signIn(email.value, password.value);
-//   // ダッシュボードへ遷移
-//   navigateTo('/', { replace: true });
-// };
+const emailSignIn = async () => {
+  const { signIn, token } = useAuth();
+  await signIn(email.value, password.value);
+  // ダッシュボードへ遷移
+  navigateTo('/dashboard', { replace: true });
+};
 
-// const googleSignIn = async () =>{
-//   const { signInByGoogleAuthProvider, token } = useAuth();
-//   await signInByGoogleAuthProvider();
-//   navigateTo('/', { replace: true });
-// };
+const googleSignIn = async () =>{
+  const { signInByGoogleAuthProvider, token } = useAuth();
+  await signInByGoogleAuthProvider();
+  navigateTo('/dashboard', { replace: true });
+};
 
 const setEmail = (value: string) :void => {
     email.value = value;
@@ -42,18 +42,18 @@ const setPassword = (value: string) :void => {
         @setPassword="setPassword"
       />
       </div>
-        <!-- <v-btn @click="googleSignIn">
+        <v-btn @click="googleSignIn">
           Google Login
-        </v-btn> -->
+        </v-btn>
       <div class="mt-15">
       <v-row class="justify-center mt-15 mb-5">
-      <!-- <v-btn
+      <v-btn
         @click="emailSignIn"
         color="#99F"
         width="300"
       >
         ログイン
-      </v-btn> -->
+      </v-btn>
       </v-row>
       </div>
       <p>

@@ -12,6 +12,17 @@ export const useAuth = () => {
     'token',
     () => null
   );
+    // TODO: 管理方法をもう少し考える…
+    const uid = useState<string | null>('uid', () => null);
+    const email = useState<string | null>('email', () => null);
+    const displayName = useState<string | null>(
+      'displayName',
+      () => null
+    );
+    const photoUrl = useState<string | null>(
+      'photoUrl',
+      () => null
+    );
 
   async function signIn(email: string, password: string) {
     return await new Promise<void>((resolve, reject) => {
@@ -47,6 +58,7 @@ export const useAuth = () => {
 
   async function signOut() {
     return await new Promise<void>((resolve, reject) => {
+      console.log("sign out now")
       const auth = getAuth();
       firebaseSignOut(auth)
         .then(() => {
@@ -68,6 +80,13 @@ export const useAuth = () => {
         auth,
         (user) => {
           if (user) {
+            displayName.value = user.displayName;
+            email.value = user.email;
+            photoUrl.value = user.photoURL;
+            // console.log('=== checkAuthState ===');
+            // console.log(uid.value);
+            // console.log(displayName.value);
+            // console.log(email.value);
             user
               .getIdToken()
               .then((idtoken) => {
@@ -93,5 +112,9 @@ export const useAuth = () => {
     signOut,
     token,
     checkAuthState,
+    uid,
+    photoUrl,
+    displayName,
+    email,
   };
 };

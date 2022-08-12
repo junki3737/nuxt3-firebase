@@ -5,25 +5,17 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
+  createUserWithEmailAndPassword,
+  Auth
 } from 'firebase/auth';
+import { useUsers } from './useUsers';
 
 export const useAuth = () => {
   const token = useState<string | null | undefined>(
     'token',
     () => null
   );
-    // TODO: 管理方法をもう少し考える…
-    const uid = useState<string | null>('uid', () => null);
-    const email = useState<string | null>('email', () => null);
-    const displayName = useState<string | null>(
-      'displayName',
-      () => null
-    );
-    const photoUrl = useState<string | null>(
-      'photoUrl',
-      () => null
-    );
-
+  
   async function signIn(email: string, password: string) {
     return await new Promise<void>((resolve, reject) => {
       const auth = getAuth();
@@ -55,6 +47,29 @@ export const useAuth = () => {
         .catch(reject);
     });
   }
+  async function signUp(email: string, password: string) {
+    return await new Promise<void>((resolve, reject) => {
+      const auth: Auth = getAuth();
+      return createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      )
+        .then((userCredential) => {
+          console.log("その1")
+          userCredential.user
+            .getIdToken()
+            .then((idToken) => {
+              console.log("その2")
+              token.value = idToken;
+              resolve();
+            })
+            .catch(reject);
+        })
+        .catch(reject);
+    });
+  }
+
 
   async function signOut() {
     return await new Promise<void>((resolve, reject) => {
@@ -78,16 +93,14 @@ export const useAuth = () => {
       const auth = getAuth();
       onAuthStateChanged(
         auth,
-        (user) => {
-          if (user) {
-            displayName.value = user.displayName;
-            email.value = user.email;
-            photoUrl.value = user.photoURL;
-            // console.log('=== checkAuthState ===');
-            // console.log(uid.value);
-            // console.log(displayName.value);
-            // console.log(email.value);
-            user
+        (userInfo) => {
+          if (userInfo) {
+            const { user } = useUsers();
+            user.value.uid = userInfo.uid;
+            // user.value.displayName = userInfo.displayName;
+            user.value.email = userInfo.email;
+            user.value.photoUrl = userInfo.photoURL;
+            userInfo
               .getIdToken()
               .then((idtoken) => {
                 token.value = idtoken;
@@ -112,9 +125,6 @@ export const useAuth = () => {
     signOut,
     token,
     checkAuthState,
-    uid,
-    photoUrl,
-    displayName,
-    email,
+    signUp
   };
 };

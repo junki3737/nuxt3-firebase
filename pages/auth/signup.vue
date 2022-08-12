@@ -1,12 +1,19 @@
 <script setup lang="ts">
+
 import { ref } from "vue";
 
 definePageMeta({
   middleware: ['auth'],
 });
-
+import {
+  UidType,
+  ErrorType,
+  ResultType,
+  UsersType,
+  ValidationRuleType,
+} from '@/types';
 const email = ref("");
-const passowrd = ref("");
+const password = ref("");
 const rePassword = ref("");
 
 const setEmail = (value: string) :void => {
@@ -14,11 +21,50 @@ const setEmail = (value: string) :void => {
 };
 
 const setPassword = (value: string) :void => {
-  passowrd.value = value;
+  password.value = value;
 };
 
 const setRePassword = (value: string) :void => {
   rePassword.value = value;
+};
+const signup = async () => {
+  try {
+    // バリデーションチェック
+    // if (!formValidate) return;
+    console.log(email.value)
+    console.log(password.value)
+    const { signUp, checkAuthState } = useAuth();
+    const { user } = useUsers();
+    await signUp(email.value, password.value);
+    await checkAuthState();
+    if (user.value.uid) {
+      const userInfo: UsersType = {
+        uid: user.value.uid,
+        // displayName: displayName.value,
+        email: email.value,
+        photoUrl: '',
+      };
+      await addSignUpUser(user.value.uid, userInfo);
+    }
+  } catch (e: ErrorType) {
+    console.error(e);
+  }
+};
+const addSignUpUser = async (
+  uid: UidType,
+  userInfo: UsersType
+) => {
+  const { addUser } = useUsers();
+  const result: ResultType = (await addUser(
+    uid,
+    userInfo
+  )) as ResultType;
+  if (result.status === 200) {
+    return navigateTo('/dashboard', { replace: true });
+  } else {
+    console.error(result.errorCode);
+    console.error(result.description);
+  }
 };
 </script>
 
@@ -52,7 +98,7 @@ const setRePassword = (value: string) :void => {
       <v-row class="justify-center mt-15 mb-5">
       <v-btn
         :loading="loading"
-        @click="signin"
+        @click="signup"
         color="#99F"
         width="300"
         class="white-text"

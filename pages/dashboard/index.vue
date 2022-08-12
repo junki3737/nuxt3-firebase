@@ -10,7 +10,7 @@ const signout = async () => {
     const { signOut } = useAuth();
     await signOut();
     // サインイン画面へ
-    //return navigateTo('/auth/signin');
+    navigateTo('/auth/signout',{ replace: true });
     // 初期化
   } catch (e: any) {
     console.error(e);

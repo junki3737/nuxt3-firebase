@@ -1,12 +1,11 @@
 import {
-  getAuth,
   signInWithEmailAndPassword,
   signOut as firebaseSignOut,
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
   createUserWithEmailAndPassword,
-  Auth
+  Auth,
 } from 'firebase/auth';
 import { useUsers } from './useUsers';
 
@@ -15,10 +14,10 @@ export const useAuth = () => {
     'token',
     () => null
   );
-  
+
   async function signIn(email: string, password: string) {
     return await new Promise<void>((resolve, reject) => {
-      const auth = getAuth();
+      const auth: Auth = useState('auth').value as Auth;
       return signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           userCredential.user
@@ -36,7 +35,8 @@ export const useAuth = () => {
   async function signInByGoogleAuthProvider() {
     return await new Promise<void>((resolve, reject) => {
       const provider = new GoogleAuthProvider();
-      const auth = getAuth();
+      // const auth = getAuth();
+      const auth: Auth = useState('auth').value as Auth;
       return signInWithPopup(auth, provider)
         .then((result) => {
           const credential =
@@ -49,18 +49,16 @@ export const useAuth = () => {
   }
   async function signUp(email: string, password: string) {
     return await new Promise<void>((resolve, reject) => {
-      const auth: Auth = getAuth();
+      const auth: Auth = useState('auth').value as Auth;
       return createUserWithEmailAndPassword(
         auth,
         email,
         password
       )
         .then((userCredential) => {
-          console.log("その1")
           userCredential.user
             .getIdToken()
             .then((idToken) => {
-              console.log("その2")
               token.value = idToken;
               resolve();
             })
@@ -74,7 +72,7 @@ export const useAuth = () => {
   async function signOut() {
     return await new Promise<void>((resolve, reject) => {
       console.log("sign out now")
-      const auth = getAuth();
+      const auth: Auth = useState('auth').value as Auth;
       firebaseSignOut(auth)
         .then(() => {
           token.value = null;
@@ -86,24 +84,26 @@ export const useAuth = () => {
     });
   }
 
-  async function checkAuthState() {
-    return await new Promise<void>((resolve, reject) => {
+  function checkAuthState() {
+    return new Promise<void>((resolve, reject) => {
       // client only
       if (process.server) return resolve();
-      const auth = getAuth();
+      const auth: Auth = useState('auth').value as Auth;
       onAuthStateChanged(
         auth,
         (userInfo) => {
           if (userInfo) {
             const { user } = useUsers();
             user.value.uid = userInfo.uid;
-            // user.value.displayName = userInfo.displayName;
+            user.value.displayName = userInfo.displayName;
             user.value.email = userInfo.email;
             user.value.photoUrl = userInfo.photoURL;
             userInfo
               .getIdToken()
               .then((idtoken) => {
                 token.value = idtoken;
+                console.info('=== checkAuthState ===');
+                console.info(idtoken);
                 resolve();
               })
               .catch(reject);
@@ -122,9 +122,9 @@ export const useAuth = () => {
   return {
     signIn,
     signInByGoogleAuthProvider,
+    signUp,
     signOut,
-    token,
     checkAuthState,
-    signUp
+    token,
   };
 };

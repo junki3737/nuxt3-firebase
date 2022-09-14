@@ -9,6 +9,10 @@ export default defineNuxtPlugin(() => {
     apiKey: config.firebaseApiKey,
     authDomain: config.firebaseAuthDomain,
     projectId: config.firebaseProjectId,
+    storageBucket: config.firebaseStorageBucket,
+    messagingSenderId: config.firebaseMessagingSenderId,
+    appId: config.firebaseAppId,
+    measurementId: config.firebaseMeasurementId,
   };
   const firebaseApp: FirebaseApp = initializeApp(firebaseConfig);
   const db: Firestore = getFirestore(firebaseApp);

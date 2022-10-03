@@ -1,5 +1,4 @@
 import {
-    ResultType,
     UidType,
     StockCollectionsType,
     StockCollectionsAddType,

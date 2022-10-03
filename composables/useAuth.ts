@@ -14,6 +14,10 @@ export const useAuth = () => {
     'token',
     () => null
   );
+  const uid = useState<string | null | undefined>(
+    'uid',
+    () => null
+  );
 
   async function signIn(email: string, password: string) {
     return await new Promise<void>((resolve, reject) => {
@@ -21,8 +25,9 @@ export const useAuth = () => {
       return signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           userCredential.user
-            .getIdToken() // トークン情報
+            .getIdToken()
             .then((idToken) => {
+              uid.value = userCredential.user.uid;
               token.value = idToken;
               resolve();
             })
@@ -35,18 +40,21 @@ export const useAuth = () => {
   async function signInByGoogleAuthProvider() {
     return await new Promise<void>((resolve, reject) => {
       const provider = new GoogleAuthProvider();
-      // const auth = getAuth();
       const auth: Auth = useState('auth').value as Auth;
       return signInWithPopup(auth, provider)
-        .then((result) => {
+        .then((userCredential) => {
           const credential =
-            GoogleAuthProvider.credentialFromResult(result);
+            GoogleAuthProvider.credentialFromResult(
+              userCredential
+            );
+          uid.value = userCredential.user.uid;
           token.value = credential?.accessToken;
           resolve();
         })
         .catch(reject);
     });
   }
+
   async function signUp(email: string, password: string) {
     return await new Promise<void>((resolve, reject) => {
       const auth: Auth = useState('auth').value as Auth;
@@ -75,6 +83,7 @@ export const useAuth = () => {
       const auth: Auth = useState('auth').value as Auth;
       firebaseSignOut(auth)
         .then(() => {
+          uid.value = null;
           token.value = null;
           resolve();
         })
@@ -126,5 +135,6 @@ export const useAuth = () => {
     signOut,
     checkAuthState,
     token,
+    uid,
   };
 };

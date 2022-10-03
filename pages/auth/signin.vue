@@ -1,22 +1,29 @@
 <script setup lang="ts"> 
 import { ref } from 'vue';
+import { setUserSession } from '@/helper/SessionStorage';
+
 definePageMeta({
   middleware: ['auth'],
 });
 
 const email = ref("");
 const password = ref("");
+const { setUserState } = useUsers();
 
 const emailSignIn = async () => {
-  const { signIn, token } = useAuth();
+  const { signIn, token, uid } = useAuth();
   await signIn(email.value, password.value);
   // ダッシュボードへ遷移
+  await setUserState(uid.value);
+  await setUserSession(uid.value);
   navigateTo('/dashboard', { replace: true });
 };
 
 const googleSignIn = async () =>{
-  const { signInByGoogleAuthProvider, token } = useAuth();
+  const { signInByGoogleAuthProvider, token, uid } = useAuth();
   await signInByGoogleAuthProvider();
+  await setUserState(uid.value);
+  await setUserSession(uid.value);
   navigateTo('/dashboard', { replace: true });
 };
 

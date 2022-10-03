@@ -40,9 +40,10 @@ const signup = async () => {
     if (user.value.uid) {
       const userInfo: UsersType = {
         uid: user.value.uid,
-        // displayName: displayName.value,
-        email: email.value,
-        photoUrl: '',
+        displayName: user.value.displayName,
+        email: user.value.email,
+        photoUrl: user.value.photoUrl,
+        tag: [],
       };
       await addSignUpUser(user.value.uid, userInfo);
     }

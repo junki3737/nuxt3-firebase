@@ -53,11 +53,11 @@ onMounted(() => {
         </thead>
         <tbody>
           <tr>
-            <td>{{ user ? user.uid : '' }}</td>
-            <td>{{ user ? user.displayName : '' }}</td>
-            <td>{{ user ? user.email : '' }}</td>
-            <td>{{ user ? user.photoUrl : '' }}</td>
-            <td>{{ user ? user.tag : '' }}</td>
+            <td>{{ userInfo ? userInfo.uid : '' }}</td>
+            <td>{{ userInfo ? userInfo.displayName : '' }}</td>
+            <td>{{ userInfo ? userInfo.email : '' }}</td>
+            <td>{{ userInfo ? userInfo.photoUrl : '' }}</td>
+            <td>{{ userInfo ? userInfo.tag : '' }}</td>
           </tr>
         </tbody>
       </v-table>

@@ -6,6 +6,7 @@ import { ref } from 'vue';
 //   ResultType,
 //   StockCollectionsAddType,
 // } from '@/types';
+import { setUserSession } from '@/helper/SessionStorage';
 
 definePageMeta({
   middleware: ['auth'],
@@ -31,41 +32,72 @@ const label: LabelType = {
 } as const;
 
 const commodityName = ref<string>('');
-const quantity = ref<string>('');
+const quantity = ref<Number>(0);
 const referenceUrl = ref<string>('');
-const tag = ref<string>('');
+const selectedTag = ref<Array<string>>([]);
 const memo = ref<string>('');
 const formValidate = ref<boolean>(true);
 const form = ref();
+const isDialogOpen = ref<boolean>(false);
+const tag = ref<string>('');
+
 
 const rules= {
   required: (value: string) => !!value || '入力してください',
 };
+const { user, addUserTag, setUserState } = useUsers();
+const { addStock } = useStocks();
+const { uid } = useAuth();
+
+const tags = computed(() => {
+  return user ? user.value.tag : [];
+});
 
 // Method
 const add = async () => {
-  console.info("登録作業開始")
   try {
     // バリデーションチェック
     // if (!formValidate) return;
     const { user } = useUsers();
     const { addStock } = useStocks();
-    const collection: StockCollectionsAddType = {
+    const collection = {
       commodityName: commodityName.value,
       quantity: Number(quantity.value),
       referenceUrl: referenceUrl.value,
-      tag: ['日用品', 'ダイソー'],
+      tag: selectedTag.value,
       memo: memo.value,
     };
-    console.info("登録作業")
-    const result= (await addStock(
+    const result = await addStock(
       user.value.uid,
       collection
-    ));
-    return navigateTo('/dashboard', { replace: true });
+    );
+    console.log(result);
+    // ダッシュボード画面へ
+    if (result.status === 200) {
+      navigateTo('/dashboard');
+    }
   } catch (e) {
     console.error(e);
   }
+};
+
+const addTag = async () => {
+  console.info(tag.value);
+  const { addUserTag, setUserState, user} = useUsers();
+  await addUserTag(user.value.uid, tag.value);
+  await setUserState(user.value.uid);
+  await setUserSession(user.value.uid);
+
+  // 初期化
+  tag.value = '';
+  isDialogOpen.value = false;
+};
+const quantityPull = () => {
+  if (Number(quantity.value) < 1) return;
+  quantity.value = Number(quantity.value) - 1;
+};
+const quantityAdd = () => {
+  quantity.value = Number(quantity.value) + 1;
 };
 </script>
 <template>
@@ -102,7 +134,7 @@ const add = async () => {
             />
           </v-col>
         </v-row>
-        <v-row>
+        <!-- <v-row>
           <v-col>
             <v-text-field
               v-model="tag"
@@ -110,7 +142,72 @@ const add = async () => {
               :name="label.tag"
             />
           </v-col>
+        </v-row> -->
+        <v-row>
+          <v-checkbox
+            v-for="(tag , key) in tags"
+            v-model="selectedTag"
+            :label="tag"
+            :value="tag"
+            :key="key"
+            hide-details
+          />
         </v-row>
+        <v-row justify="center">
+          <v-dialog
+            v-model="isDialogOpen"
+            persistent
+            max-width="600px"
+            content-class="dialogContents"
+          >
+            <template v-slot:activator="{ props }">
+              <v-btn
+                v-bind="props"
+                :color="'error'"
+                :size="'large'"
+                :variant="'outlined'"
+                >タグ追加</v-btn
+              >
+            </template>
+            <v-card>
+              <v-container>
+                <v-card-title>
+                  <span class="text-h5">追加画面</span>
+                </v-card-title>
+                <v-card-text>
+                  <v-row>
+                    <v-text-field
+                      v-model="tag"
+                      hide-details
+                      label="タグ"
+                    ></v-text-field>
+                  </v-row>
+                </v-card-text>
+                <v-card-actions class="mt-5">
+                  <v-row justify="center">
+                    <v-col>
+                      <v-btn
+                        :size="'large'"
+                        :variant="'outlined'"
+                        @click="isDialogOpen = false"
+                        >閉じる</v-btn
+                      >
+                    </v-col>
+                    <v-col>
+                      <v-btn
+                        :size="'large'"
+                        @click="addTag"
+                        :disabled="!tag"
+                        >追加</v-btn
+                      >
+                    </v-col>
+                  </v-row>
+                </v-card-actions>
+              </v-container>
+            </v-card>
+          </v-dialog>
+        </v-row>
+
         <v-row>
           <v-col>
             <v-text-field
